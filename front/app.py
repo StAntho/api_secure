@@ -32,6 +32,20 @@ with col_response:
         st.markdown("**Response**")
         res = httpx.get(
             API_URL+path,
+            params=
+                {"need_format":True,
+                "path":path},
             timeout=60.0,
-        )
-        st.write(res.json())
+        ).json()
+        # st.write(res)
+        c1, c2 = st.columns(2)
+        c1.metric("Statut", res["status_code"] or "erreur")
+        c2.metric("Temps", f"{res['ms']:.0f}ms")
+        st.markdown("**Body**")
+        if isinstance(res, (dict, list)):
+            st.json(res)
+        else:
+            st.code(res)
+        st.markdown("**En têtes**")
+        st.json(res["headers"])
+
