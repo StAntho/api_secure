@@ -18,8 +18,13 @@ with st.sidebar:
     api_url = st.text_input("URL de l'API", "http://localhost:8000/endpoint").rstrip("/")
     username= st.text_input("User", "admin")
     password = st.text_input("Mot de passe", type="password")
+    key = st.text_input("API Key", type="password")
 
+api_key = key if key is not None or key != "" else None
 
+if api_key is not None:
+    headers= {"X-api-key": api_key}
+    
 endpoints = ['/public_data/info', '/private_data/info', '/private_data/health']
 col_request, col_response = st.columns(2)
 
@@ -30,8 +35,10 @@ with col_request:
 with col_response:
     if send:
         st.markdown("**Response**")
+
         res = httpx.get(
             API_URL+path,
+            headers=headers,
             params=
                 {"need_format":True,
                 "path":path},
